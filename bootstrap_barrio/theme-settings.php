@@ -57,7 +57,7 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
         'bootstrap_barrio/bootswatch_cosmo' => t('Bootswatch Cosmo'),
         'bootstrap_barrio/bootswatch_cyborg' => t('Bootswatch Cyborg'),
         'bootstrap_barrio/bootswatch_darkly' => t('Bootswatch Darkly'),
-        'bootstrap_barrio/bootswatch_flatly' => t('Bootswatch Flatly'),
+        'bootstrap_barrio/bootswatch_flaty' => t('Bootswatch Flatly'),
         'bootstrap_barrio/bootswatch_journal' => t('Bootswatch Journal'),
         'bootstrap_barrio/bootswatch_litera' => t('Bootswatch Litera'),
         'bootstrap_barrio/bootswatch_lumen' => t('Bootswatch Lumen'),
@@ -263,20 +263,6 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
   ];
 
   // Buttons.
-  $form['components']['node'] = [
-    '#type' => 'details',
-    '#title' => t('Node'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  ];
-  $form['components']['node']['bootstrap_barrio_hide_node_label'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Hide node label'),
-    '#default_value' => theme_get_setting('bootstrap_barrio_hide_node_label'),
-    '#description' => t('Hide node label for all display. Usefull when using f.e. Layout Builder and you want full control of your output'),
-  ];
-
-  // Buttons.
   $form['components']['buttons'] = [
     '#type' => 'details',
     '#title' => t('Buttons'),
@@ -443,29 +429,16 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   ];
-  
-  $form['components']['navbar_behaviour']['bootstrap_barrio_navbar_offcanvas'] = [
-    '#type' => 'select',
-    '#title' => t('Default/Bootstrap Offcanvas Collapse'),
-    '#default_value' => theme_get_setting('bootstrap_barrio_navbar_offcanvas'),
-    '#options' => [
-      'offcanvas-collapse' => t('Offcanvas'),
-    ],
-    '#empty_option' => t('Default'),
-  ];
-
   $form['components']['navbar_behaviour']['bootstrap_barrio_navbar_flyout'] = [
     '#type' => 'checkbox',
     '#title' => t('Flyout style main menu'),
     '#default_value' => theme_get_setting('bootstrap_barrio_navbar_flyout'),
   ];
-
   $form['components']['navbar_behaviour']['bootstrap_barrio_navbar_slide'] = [
     '#type' => 'checkbox',
     '#title' => t('Sliding navbar'),
     '#description' => t('Collapsed navbar will slide left to right'),
     '#default_value' => theme_get_setting('bootstrap_barrio_navbar_slide'),
-    '#description' => t('DO NOT USE IN NEW SITES. Removed in favor of Bootstrap Offcanvas.'),
   ];
 
   // Tabs.
@@ -502,6 +475,51 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
       'default' => t('Alerts classic'),
       'alerts' => t('Alerts bottom'),
       'toasts' => t('Toasts'),
+    ],
+  ];
+
+  // Form.
+  $form['components']['form'] = [
+    '#type' => 'details',
+    '#title' => t('Form'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  ];
+  $form['components']['form']['bootstrap_barrio_radio'] = [
+    '#type' => 'select',
+    '#title' => t('Radio widget'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_radio'),
+    '#options' => [
+      'standard' => t('Standard'),
+      'custom' => t('Custom'),
+    ],
+  ];
+  $form['components']['form']['bootstrap_barrio_checkbox'] = [
+    '#type' => 'select',
+    '#title' => t('Checkbox widget'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_checkbox'),
+    '#options' => [
+      'standard' => t('Standard'),
+      'custom' => t('Custom'),
+      'switch' => t('Switch'),
+    ],
+  ];
+  $form['components']['form']['bootstrap_barrio_select'] = [
+    '#type' => 'select',
+    '#title' => t('Select widget'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_select'),
+    '#options' => [
+      'standard' => t('Standard'),
+      'custom' => t('Custom'),
+    ],
+  ];
+  $form['components']['form']['bootstrap_barrio_file'] = [
+    '#type' => 'select',
+    '#title' => t('File widget'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_file'),
+    '#options' => [
+      'standard' => t('Standard'),
+      'custom' => t('Custom'),
     ],
   ];
 

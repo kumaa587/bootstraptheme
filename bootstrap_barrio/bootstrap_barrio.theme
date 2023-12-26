@@ -45,8 +45,8 @@ function bootstrap_barrio_preprocess_html(&$variables) {
 
   // Scroll Spy info added to body.
   if ($scroll_spy = theme_get_setting('bootstrap_barrio_scroll_spy')) {
-    $variables['attributes']['data-bs-target'] = $scroll_spy;
-    $variables['attributes']['data-bs-spy'] = "scroll";
+    $variables['attributes']['data-target'] = $scroll_spy;
+    $variables['attributes']['data-spy'] = "scroll";
   }
 
   // Page specific info.
@@ -204,18 +204,6 @@ function bootstrap_barrio_preprocess_page(&$variables) {
   }
   if (theme_get_setting('bootstrap_barrio_navbar_class') !== NULL) {
     $variables['navbar_attributes']['class'][] = theme_get_setting('bootstrap_barrio_navbar_class');
-  }
-
-  switch (theme_get_setting('bootstrap_barrio_navbar_offcanvas')) {
-    case 'offcanvas-collapse':
-      $variables['navbar_offcanvas'] = TRUE;
-      $variables['navbar_collapse_class'] = "offcanvas offcanvas-end";
-      $variables['navbar_collapse_btn_data'] = "offcanvas";
-      break;
-    default:
-      $variables['navbar _offcanvas'] = TRUE; 
-      $variables['navbar_collapse_class'] = 'collapse navbar-collapse justify-content-end';
-      $variables['navbar_collapse_btn_data'] = "collapse";
   }
 
   // Affix.
@@ -377,10 +365,6 @@ function bootstrap_barrio_preprocess_node(&$variables) {
   if ($variables['teaser'] || !empty($variables['content']['comments']['comment_form'])) {
     unset($variables['content']['links']['comment']['#links']['comment-add']);
   }
-  // Hide label on all nodes
-  if (theme_get_setting('bootstrap_barrio_hide_node_label') != NULL) {
-    unset($variables['label']);
-  }
 }
 
 /**
@@ -411,6 +395,7 @@ function bootstrap_barrio_preprocess_region(&$variables) {
 function bootstrap_barrio_preprocess_block(&$variables) {
   if ($variables['base_plugin_id'] == 'system_menu_block' && isset($variables['attributes']['id'])) {
     $variables['content']['#attributes']['id'] = $variables['attributes']['id'];
+    $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
   }
   // Add a clearfix class to system branding blocks.
   if ($variables['plugin_id'] == 'system_branding_block') {
@@ -436,6 +421,39 @@ function bootstrap_barrio_preprocess_form_element(&$variables) {
   if (isset($variables['element']['#attributes'])) {
     $variables['input_attributes'] = new Attribute($variables['element']['#attributes']);
   }
+  if (isset($variables['type'])) {
+    switch ($variables['type']) {
+      case 'checkbox':
+        $variables['customtype'] = theme_get_setting('bootstrap_barrio_checkbox');
+        break;
+
+      case 'radio':
+        $variables['customtype'] = theme_get_setting('bootstrap_barrio_radio');
+        break;
+
+      default:
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_select() for adding classes to select elements.
+ */
+function bootstrap_barrio_preprocess_select(&$variables) {
+  $variables['customtype'] = theme_get_setting('bootstrap_barrio_select');
+  if (isset($variables['attributes']['class'])) {
+    if (is_object($variables['attributes']['class'])) {
+      if (in_array('error', $variables['attributes']['class']->value())) {
+        $variables['attributes']['class']->addClass('is-invalid');
+      }
+    }
+    elseif (is_array($variables['attributes']['class'])) {
+      if (in_array('error', $variables['attributes']['class'])) {
+        $variables['attributes']['class'][] = 'is-invalid';
+      }
+    }
+  }
 }
 
 /**
@@ -443,6 +461,13 @@ function bootstrap_barrio_preprocess_form_element(&$variables) {
  */
 function bootstrap_barrio_preprocess_form_element_label(&$variables) {
   $element = $variables['element'];
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for file-managed-file.html.twig.
+ */
+function bootstrap_barrio_preprocess_file_managed_file(&$variables) {
+  $variables['customtype'] = theme_get_setting('bootstrap_barrio_file');
 }
 
 /**
@@ -667,33 +692,21 @@ function bootstrap_barrio_theme_suggestions_input_alter(array &$suggestions, arr
  */
 
 /**
- * Implements hook_preprocess().
+ * Implements hook_preprocess_input() for adding classes to inputs.
  */
-function bootstrap_barrio_preprocess(&$variables, $hook) {
+function bootstrap_barrio_preprocess_input(&$variables) {
   if (isset($variables['attributes']['class'])) {
-    $class = 'is-invalid';
-
     if (is_object($variables['attributes']['class'])) {
       if (in_array('error', $variables['attributes']['class']->value())) {
-        $variables['attributes']->addClass($class);
-        // If there is a wrapper, add class too.
-        if (isset($variables["wrapper_attributes"])) {
-          $variables['wrapper_attributes']->addClass($class);
-        }
+        $variables['attributes']['class']->addClass('is-invalid');
       }
     }
     elseif (is_array($variables['attributes']['class'])) {
       if (in_array('error', $variables['attributes']['class'])) {
-        $variables['attributes']['class'][] = $class;
+        $variables['attributes']['class'][] = 'is-invalid';
       }
     }
   }
-}
-
-/**
- * Implements hook_preprocess_input() for adding classes to inputs.
- */
-function bootstrap_barrio_preprocess_input(&$variables) {
   if ($variables['element']['#type'] == 'submit') {
     $button_size = theme_get_setting('bootstrap_barrio_button_size');
     $button_types = [
@@ -741,24 +754,5 @@ function bootstrap_barrio_preprocess_input(&$variables) {
       $variables['attributes'] = new Attribute($variables['attributes']);
     }
     $variables['safe_value_label'] = Xss::filter($variables['attributes']['value']);
-  }
-}
-
-
-/**
- * Implements hook_preprocess_select() for adding classes to select boxes.
- */
-function bootstrap_barrio_preprocess_select(&$variables) {
-  if (isset($variables['attributes']['class'])) {
-    if (is_object($variables['attributes']['class'])) {
-      if (in_array('error', $variables['attributes']['class']->value())) {
-        $variables['attributes']['class']->addClass('is-invalid');
-      }
-    }
-    elseif (is_array($variables['attributes']['class'])) {
-      if (in_array('error', $variables['attributes']['class'])) {
-        $variables['attributes']['class'][] = 'is-invalid';
-      }
-    }
   }
 }
